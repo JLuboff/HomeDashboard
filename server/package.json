@@ -1,0 +1,16 @@
+{
+  "name": "homedashboardserver",
+  "version": "1.0.0",
+  "description": "Server side for home dashboard",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node ./dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jason Luboff",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^14.14.6",
+    "myq-api": "^2.0.2"
+  }
+}
