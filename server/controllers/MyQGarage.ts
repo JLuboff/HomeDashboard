@@ -23,6 +23,24 @@ export interface MyQDevice {
   parent_device_id: string;
   serial_number: string;
 }
+interface Success {
+  code: 'OK';
+}
+interface LoginResult extends Success {
+  securityToken: string;
+}
+
+interface GetDeviceResult extends Success {
+  device: MyQDevice;
+}
+
+interface GetDevicesResult extends Success {
+  devices: MyQDevice[];
+}
+
+interface GetDoorStateResult extends Success {
+  deviceState: 'open' | 'closed';
+}
 
 interface MyQAPI {
   _accountId: null | string;
@@ -32,16 +50,16 @@ interface MyQAPI {
   _getAccountId: () => Promise<any>;
   _getDeviceState: () => Promise<any>;
   _setDeviceState: () => Promise<any>;
-  getDevice: () => Promise<any>;
-  getDevices: () => Promise<any>;
-  getDoorState: (serialNumber: string) => Promise<any>;
+  getDevice: () => Promise<GetDeviceResult>;
+  getDevices: () => Promise<GetDevicesResult>;
+  getDoorState: (serialNumber: string) => Promise<GetDoorStateResult>;
   getLightState: () => Promise<any>;
-  login: (email: string, password: string) => Promise<any>;
+  login: (email: string, password: string) => Promise<LoginResult>;
   setDoorState: (
     serialNumber: string,
     status: 'OPEN' | 'CLOSE'
-  ) => Promise<any>;
-  setLightState: () => Promise<any>;
+  ) => Promise<Success>;
+  setLightState: () => Promise<Success>;
 }
 
 interface MyQGarageClass {
@@ -54,7 +72,7 @@ interface MyQGarageClass {
   ) => Promise<MyQDevice | MyQDevice[] | undefined>;
   getGarageDoorStatus: (
     serialNumber: string
-  ) => Promise<keyof typeof GARAGEDOORSTATUS | undefined>;
+  ) => Promise<GetDoorStateResult | undefined>;
   changeGarageDoorStatus: (
     serialNumber: string,
     status: keyof typeof GARAGEDOORSTATUS
@@ -119,7 +137,7 @@ export default class MyQGarage implements MyQGarageClass {
    */
   async getGarageDoorStatus(
     serialNumber: string
-  ): Promise<keyof typeof GARAGEDOORSTATUS | undefined> {
+  ): Promise<GetDoorStateResult | undefined> {
     try {
       return await this.myQ?.getDoorState(serialNumber);
     } catch (error) {
